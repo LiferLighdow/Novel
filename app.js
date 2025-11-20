@@ -1,4 +1,4 @@
-// 專業小說閱讀器 - 靜態版本
+// Lifer_Lighdow原創小說 - 靜態版本
 class NovelReader {
     constructor() {
         this.currentView = 'library';
@@ -48,7 +48,7 @@ class NovelReader {
 
     // 載入內建小說
     async loadBuiltInNovels() {
-        const novelFiles = ['影夜','暗夜之影','影樂傳奇','夜下浮影','無影之夜','夜影漫舞','影夜之謎','初音之影','影夜聚一','夢','錯位的愛恨','背上鬼女兒的戀'];
+        const novelFiles = ['影夜','暗夜之影','影樂傳奇','夜下浮影','無影之夜','夜影漫舞','影夜之謎','初音之影','影夜聚一','夢','輪迴之夢','覺醒之夢','無盡之夢','錯位的愛恨','背上鬼女兒的戀'];
         
         for (const fileName of novelFiles) {
             try {
@@ -417,7 +417,7 @@ class NovelReader {
                         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                     </svg>
-                    <h2>歡迎使用專業小說閱讀器</h2>
+                    <h2>歡迎使用Lifer_Lighdow原創小說</h2>
                     <p>您還沒有添加任何書籍。點擊右下角的加號按鈕開始添加您的第一本小說吧！</p>
                 </div>
             `;
