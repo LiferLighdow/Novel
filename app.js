@@ -31,7 +31,6 @@ class NovelReader {
         // Set initial icon state
         const viewToggle = document.getElementById('view-toggle');
         if (viewToggle) {
-            console.log('Setting initial view icons.');
             const gridIcon = viewToggle.querySelector('.grid-icon');
             const listIcon = viewToggle.querySelector('.list-icon');
             if (this.viewMode === 'grid') {
@@ -196,7 +195,6 @@ class NovelReader {
         const viewToggleBtn = document.getElementById('view-toggle');
         if (viewToggleBtn) {
             viewToggleBtn.addEventListener('click', () => {
-                console.log('視圖切換按鈕被點擊');
                 this.toggleViewMode();
             });
         } else {
@@ -362,7 +360,7 @@ class NovelReader {
 
     toggleViewMode() {
         this.viewMode = this.viewMode === 'grid' ? 'list' : 'grid';
-        console.log(`[toggleViewMode] View mode changed to: ${this.viewMode}`);
+        
         
         // Re-render the books with the new view mode
         this.renderLibrary();
@@ -374,12 +372,10 @@ class NovelReader {
         
         if (this.viewMode === 'grid') {
             // View is now a grid, so show the list icon as the action to switch
-            console.log('[toggleViewMode] Setting icon to list');
             gridIcon.classList.add('hidden');
             listIcon.classList.remove('hidden');
         } else {
             // View is now a list, so show the grid icon as the action to switch
-            console.log('[toggleViewMode] Setting icon to grid');
             gridIcon.classList.remove('hidden');
             listIcon.classList.add('hidden');
         }
@@ -405,7 +401,7 @@ class NovelReader {
     }
 
     renderBooks() {
-        console.log(`[renderBooks] Rendering with view mode: ${this.viewMode}`);
+        
         const container = document.getElementById('books-container');
         const filteredBooks = this.getFilteredBooks();
         const allBooks = [...this.books, ...this.builtInNovels];
@@ -1280,22 +1276,4 @@ document.addEventListener('DOMContentLoaded', () => {
     novelReader = new NovelReader();
 });
 
-// 添加 CSS 動畫
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-    }
-    .chapter-item:hover {
-        background: var(--bg-tertiary) !important;
-    }
-    .chapter-item.active:hover {
-        background: var(--accent-hover) !important;
-    }
-`;
-document.head.appendChild(style);
+// NOTE: CSS animations and chapter-item hover styles were moved to styles.css for separation of concerns.
