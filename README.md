@@ -67,6 +67,4 @@ A: 將 `.html` 檔放到 `novels/` 資料夾，檔名需與 `app.js` 中 `loadBu
 
 ---
 
-如果你要我把 README 再改成更簡潔的版本、或加上操作截圖與開發流程（例如如何在 VS Code 調試），我可以接著幫你補上。
-
 Enjoy reading! 📚
