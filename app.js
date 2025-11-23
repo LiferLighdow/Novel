@@ -209,6 +209,18 @@ class NovelReader {
             this.renderLibrary();
         });
 
+        // 分類篩選（只在初始化時綁定一次，避免重複綁定導致性能問題）
+        const categoryFilters = document.getElementById('category-filters');
+        if (categoryFilters) {
+            categoryFilters.addEventListener('click', (e) => {
+                const btn = e.target.closest('.category-btn');
+                if (!btn) return;
+                this.selectedCategory = btn.dataset.category;
+                this.renderCategoryFilters();
+                this.renderBooks();
+            });
+        }
+
         // 返回書庫
         document.getElementById('back-to-library').addEventListener('click', () => {
             this.showLibrary();
@@ -384,22 +396,12 @@ class NovelReader {
         const allBooks = [...this.books, ...this.builtInNovels];
         const categories = ['全部', ...new Set(allBooks.map(book => book.category).filter(Boolean))];
         const container = document.getElementById('category-filters');
-        
         container.innerHTML = categories.map(category => `
             <button class="category-btn ${category === this.selectedCategory ? 'active' : ''}" 
                     data-category="${category}">
                 ${category}
             </button>
         `).join('');
-
-        // 綁定分類篩選事件
-        container.addEventListener('click', (e) => {
-            if (e.target.classList.contains('category-btn')) {
-                this.selectedCategory = e.target.dataset.category;
-                this.renderCategoryFilters();
-                this.renderBooks();
-            }
-        });
     }
 
     renderBooks() {
@@ -920,6 +922,11 @@ class NovelReader {
         `;
         
         this.showModal(modal);
+    }
+
+    // 舊名稱相容性包裝：部分地方呼叫 showBookForm，但實際實作為 showBookUploader
+    showBookForm() {
+        this.showBookUploader();
     }
 
     addChapterInput() {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>專業小說閱讀器</title>
+    <title>Lifer_Lighdow原創小說</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
                                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                             </svg>
-                            <h1>專業小說閱讀器</h1>
+                            <h1>Lifer_Lighdow原創小說</h1>
                         </div>
                         <div class="header-actions">
                             <button id="theme-toggle" class="btn-icon" title="切換主題">
@@ -80,18 +80,8 @@
                         </div>
                     </div>
 
-                    <!-- Books Grid -->
-                    <div id="books-container" class="books-grid">
-                        <!-- 空狀態 -->
-                        <div id="empty-state" class="empty-state">
-                            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            </svg>
-                            <h2>歡迎使用專業小說閱讀器</h2>
-                            <p>您還沒有添加任何書籍。點擊右下角的加號按鈕開始添加您的第一本小說吧！</p>
-                        </div>
-                    </div>
+                    <!-- Books Grid (由 app.js 動態渲染內容) -->
+                    <div id="books-container" class="books-grid"></div>
                 </div>
             </main>
         </div>
