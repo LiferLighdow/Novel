@@ -7,7 +7,7 @@ class NovelReader {
         this.isDarkMode = false;
         this.viewMode = 'grid'; // 'grid' or 'list'
         this.books = [];
-        this.builtInNovels = []; // 內建小說列表
+        this.builtInNovels = []; // 官方小說列表
         this.searchTerm = '';
         this.selectedCategory = '全部';
         this.readerSettings = {
@@ -45,9 +45,9 @@ class NovelReader {
         }
     }
 
-    // 載入內建小說
+    // 載入官方小說
     async loadBuiltInNovels() {
-        const novelFiles = ['影夜','暗夜之影','影樂傳奇','夜下浮影','無影之夜','夜影漫舞','影夜之謎','初音之影','影夜聚一','夢','輪迴之夢','覺醒之夢','無盡之夢','破曉之夢','終結之夢','甜蜜之夢','錯位的愛恨','精神的長夜','關於我那變成我妻子的義妹，其實本來就是我父母想結卻沒結成的緣分這檔事','背上鬼女兒的戀','我用迴紋針織出來，送給你的禮物錦繡'];
+        const novelFiles = ['暗夜之影','影樂傳奇','夜下浮影','無影之夜','夜影漫舞','影夜之謎','初音之影','影夜聚一','輪迴之夢','覺醒之夢','無盡之夢','破曉之夢','終結之夢','甜蜜之夢','錯位的愛恨','精神的長夜','關於我那變成我妻子的義妹，其實本來就是我父母想結卻沒結成的緣分這檔事','背上鬼女兒的戀','我用迴紋針織出來，送給你的禮物錦繡'];
         
         for (const fileName of novelFiles) {
             try {
@@ -60,7 +60,7 @@ class NovelReader {
                     }
                 }
             } catch (error) {
-                console.warn(`無法載入內建小說 ${fileName}:`, error);
+                console.warn(`無法載入官方小說 ${fileName}:`, error);
             }
         }
     }
@@ -82,7 +82,7 @@ class NovelReader {
             
             const category = doc.querySelector('meta[name="category"]')?.getAttribute('content') || 
                             doc.querySelector('.novel-info .category')?.textContent?.replace('類別：', '') || 
-                            '內建小說';
+                            '官方小說';
             
             const description = doc.querySelector('meta[name="description"]')?.getAttribute('content') || 
                                doc.querySelector('.novel-info .description')?.textContent || 
@@ -278,7 +278,7 @@ class NovelReader {
                     const isBuiltIn = bookElement.dataset.isBuiltin === 'true';
                     
                     if (isBuiltIn) {
-                        this.showNotification('內建小說無法編輯', 'warning');
+                        this.showNotification('官方小說無法編輯', 'warning');
                     } else {
                         const book = this.books.find(b => b.id == bookId);
                         if (book) {
@@ -295,7 +295,7 @@ class NovelReader {
                     const isBuiltIn = bookElement.dataset.isBuiltin === 'true';
 
                     if (isBuiltIn) {
-                        this.showNotification('內建小說無法刪除', 'warning');
+                        this.showNotification('官方小說無法刪除', 'warning');
                     } else {
                         this.confirmAction('確認刪除', `您確定要刪除這本書嗎？此操作無法復原。`, () => {
                             this.deleteBook(bookId);
@@ -388,7 +388,7 @@ class NovelReader {
     }
 
     renderCategoryFilters() {
-        // 合併用戶書籍和內建小說的分類
+        // 合併用戶書籍和官方小說的分類
         const allBooks = [...this.books, ...this.builtInNovels];
         const categories = ['全部', ...new Set(allBooks.map(book => book.category).filter(Boolean))];
         const container = document.getElementById('category-filters');
@@ -458,7 +458,7 @@ class NovelReader {
                 <div class="book-cover">
                     <img src="${book.cover || defaultCover}" alt="${book.title}" 
                          onerror="this.src='${defaultCover}'">
-                    ${isBuiltIn ? '<div class="builtin-badge">內建</div>' : ''}
+                    ${isBuiltIn ? '<div class="builtin-badge">官方</div>' : ''}
                 </div>
                 <div class="book-info">
                     <h3 class="book-title">${book.title}</h3>
@@ -467,14 +467,14 @@ class NovelReader {
                     <p class="book-chapters">${book.chapters.length} 章節</p>
                 </div>
                 <div class="book-actions">
-                    <button class="btn btn-secondary edit-btn" ${isBuiltIn ? 'disabled title="內建小說無法編輯"' : ''}>
+                    <button class="btn btn-secondary edit-btn" ${isBuiltIn ? 'disabled title="官方小說無法編輯"' : ''}>
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                         </svg>
                         編輯
                     </button>
-                    <button class="btn btn-secondary delete-btn" ${isBuiltIn ? 'disabled title="內建小說無法刪除"' : ''}>
+                    <button class="btn btn-secondary delete-btn" ${isBuiltIn ? 'disabled title="官方小說無法刪除"' : ''}>
                         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="3,6 5,6 21,6"></polyline>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -495,7 +495,7 @@ class NovelReader {
                 <div class="book-list-cover">
                     <img src="${book.cover || defaultCover}" alt="${book.title}" 
                          onerror="this.src='${defaultCover}'">
-                    ${isBuiltIn ? '<div class="builtin-badge">內建</div>' : ''}
+                    ${isBuiltIn ? '<div class="builtin-badge">官方</div>' : ''}
                 </div>
                 <div class="book-list-info">
                     <h3 class="book-list-title">${book.title}</h3>
@@ -506,13 +506,13 @@ class NovelReader {
                     ${book.category ? `<span class="book-category">${book.category}</span>` : ''}
                     <p class="book-chapters">${book.chapters.length} 章節</p>
                     <div class="book-list-actions">
-                        <button class="btn-icon edit-btn" ${isBuiltIn ? 'disabled title="內建小說無法編輯"' : ''}>
+                        <button class="btn-icon edit-btn" ${isBuiltIn ? 'disabled title="官方小說無法編輯"' : ''}>
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                             </svg>
                         </button>
-                        <button class="btn-icon delete-btn" ${isBuiltIn ? 'disabled title="內建小說無法刪除"' : ''}>
+                        <button class="btn-icon delete-btn" ${isBuiltIn ? 'disabled title="官方小說無法刪除"' : ''}>
                             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="3,6 5,6 21,6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -1245,7 +1245,7 @@ class NovelReader {
                         <select id="font-family-select" class="form-select" onchange="novelReader.updateSetting('fontFamily', this.value)">
                             <option value="MyCustomFont" ${this.readerSettings.fontFamily === 'MyCustomFont' ? 'selected' : ''}>手寫字體</option>
                             <option value="Noto Serif TC" ${this.readerSettings.fontFamily === 'Noto Serif TC' ? 'selected' : ''}>思源宋體</option>
-                            <option value="Calligraphy" ${this.readerSettings.fontFamily === 'Calligraphy' ? 'selected' : ''}>書法字體</option>
+                            <option value="Calligraphy" ${this.readerSettings.fontFamily === 'Calligraphy' ? 'selected' : ''}>書法字體（需要網路）</option>
                             <option value="LXGW Marker Gothic" ${this.readerSettings.fontFamily === 'LXGW Marker Gothic' ? 'selected' : ''}>LXGW Marker Gothic</option>
                             <option value="Times New Roman" ${this.readerSettings.fontFamily === 'Times New Roman' ? 'selected' : ''}>Times New Roman</option>
                             <option value="Inter" ${this.readerSettings.fontFamily === 'Inter' ? 'selected' : ''}>Inter</option>
