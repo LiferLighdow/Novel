@@ -14,6 +14,7 @@ const PRECACHE_URLS = [
     './novels/初音之影.html',
     './novels/夜下浮影.html',
     './novels/夜影漫舞.html',
+    './novels/彼岸之夢.html',
     './novels/影夜之謎.html',
     './novels/影夜聚一.html',
     './novels/影樂傳奇.html',
