@@ -10,6 +10,7 @@ class NovelReader {
         this.builtInNovels = []; // 官方小說列表
         this.searchTerm = '';
         this.selectedCategory = '全部';
+        this.initialBookKey = new URLSearchParams(window.location.search).get('book');
         this.readerSettings = {
             fontSize: 18,
             lineHeight: 1.8,
@@ -43,6 +44,8 @@ class NovelReader {
                 listIcon.classList.add('hidden');
             }
         }
+
+        this.openInitialBook();
     }
 
     // 載入官方小說
@@ -221,7 +224,15 @@ class NovelReader {
 
         // 返回書庫
         document.getElementById('back-to-library').addEventListener('click', () => {
-            this.showLibrary();
+            if (history.state?.appView === 'reader') {
+                history.back();
+            } else {
+                this.showLibrary();
+            }
+        });
+
+        window.addEventListener('popstate', () => {
+            this.syncViewWithUrl();
         });
 
         // 章節導航
@@ -346,16 +357,112 @@ class NovelReader {
         this.currentView = viewName;
     }
 
-    showLibrary() {
+    showLibrary({ updateHistory = true } = {}) {
+        if (updateHistory) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('book');
+            url.searchParams.delete('chapter');
+            history.replaceState({ appView: 'library' }, '', url);
+        }
         this.showView('library');
         this.renderLibrary();
     }
 
-    showReader(book, chapterIndex = 0) {
+    showReader(book, chapterIndex = 0, { updateHistory = true } = {}) {
+        if (updateHistory) {
+            const bookKey = this.getBookUrlKey(book);
+            const url = new URL(window.location.href);
+            url.searchParams.set('book', bookKey);
+            url.searchParams.set('chapter', String(chapterIndex + 1));
+            history.pushState({ appView: 'reader', bookKey }, '', url);
+        }
         this.selectedBook = book;
         this.currentChapter = chapterIndex;
         this.showView('reader');
         this.renderReader();
+    }
+
+    getBookUrlKey(book) {
+        return book.isBuiltIn ? book.fileName : `local:${book.id}`;
+    }
+
+    findBookByUrlKey(bookKey) {
+        return [...this.books, ...this.builtInNovels]
+            .find((book) => this.getBookUrlKey(book) === bookKey);
+    }
+
+    openInitialBook() {
+        if (!this.initialBookKey) {
+            const libraryUrl = new URL(window.location.href);
+            libraryUrl.searchParams.delete('chapter');
+            history.replaceState({ appView: 'library' }, '', libraryUrl);
+            return;
+        }
+
+        const book = this.findBookByUrlKey(this.initialBookKey);
+        if (!book) {
+            this.showLibrary();
+            this.showNotification('找不到網址指定的小說，已返回書庫', 'warning');
+            return;
+        }
+
+        const chapterIndex = this.getChapterIndexFromUrl(book);
+        const readerUrl = new URL(window.location.href);
+        const libraryUrl = new URL(readerUrl);
+        libraryUrl.searchParams.delete('book');
+        libraryUrl.searchParams.delete('chapter');
+        readerUrl.searchParams.set('chapter', String(chapterIndex + 1));
+        history.replaceState({ appView: 'library' }, '', libraryUrl);
+        history.pushState(
+            { appView: 'reader', bookKey: this.initialBookKey, chapter: chapterIndex + 1 },
+            '',
+            readerUrl
+        );
+        this.showReader(book, chapterIndex, { updateHistory: false });
+    }
+
+    syncViewWithUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const bookKey = params.get('book');
+        const book = bookKey ? this.findBookByUrlKey(bookKey) : null;
+
+        if (book) {
+            const chapterIndex = this.getChapterIndexFromUrl(book);
+            this.showReader(book, chapterIndex, { updateHistory: false });
+            this.updateChapterUrl();
+            return;
+        }
+
+        this.showLibrary({ updateHistory: false });
+    }
+
+    getChapterIndexFromUrl(book) {
+        const chapterParam = new URLSearchParams(window.location.search).get('chapter');
+        if (chapterParam === null) {
+            return 0;
+        }
+
+        const chapterNumber = Number(chapterParam);
+        if (!Number.isInteger(chapterNumber) || chapterNumber < 1 || chapterNumber > book.chapters.length) {
+            this.showNotification('網址中的章節編號無效，已開啟第一章', 'warning');
+            return 0;
+        }
+
+        return chapterNumber - 1;
+    }
+
+    updateChapterUrl() {
+        if (!this.selectedBook || new URLSearchParams(window.location.search).get('book') !== this.getBookUrlKey(this.selectedBook)) {
+            return;
+        }
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('chapter', String(this.currentChapter + 1));
+        history.replaceState(
+            { ...history.state, appView: 'reader', bookKey: this.getBookUrlKey(this.selectedBook), chapter: this.currentChapter + 1 },
+            '',
+            url
+        );
     }
 
     toggleViewMode() {
@@ -582,6 +689,7 @@ class NovelReader {
     prevChapter() {
         if (this.currentChapter > 0) {
             this.currentChapter--;
+            this.updateChapterUrl();
             this.renderReader();
         }
     }
@@ -589,12 +697,14 @@ class NovelReader {
     nextChapter() {
         if (this.currentChapter < this.selectedBook.chapters.length - 1) {
             this.currentChapter++;
+            this.updateChapterUrl();
             this.renderReader();
         }
     }
 
     goToChapter(chapterIndex) {
         this.currentChapter = chapterIndex;
+        this.updateChapterUrl();
         this.renderReader();
     }
 

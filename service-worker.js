@@ -1,4 +1,4 @@
-const CACHE_NAME = 'novel-reader-v2';
+const CACHE_NAME = 'novel-reader-v4';
 const CACHE_PREFIX = 'novel-reader-';
 const PRECACHE_URLS = [
     './',
