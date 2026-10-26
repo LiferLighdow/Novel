@@ -1,4 +1,4 @@
-const CACHE_NAME = 'novel-reader-v4';
+const CACHE_NAME = 'novel-reader-v5';
 const CACHE_PREFIX = 'novel-reader-';
 const PRECACHE_URLS = [
     './',
@@ -6,6 +6,7 @@ const PRECACHE_URLS = [
     './styles.css',
     './app.js',
     './font.ttf',
+    './mathjax/precache.json',
     './pwa.js',
     './manifest.webmanifest',
     './icons/icon.svg',
@@ -60,6 +61,24 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => cache.addAll(PRECACHE_URLS))
+            .then((cache) => caches.open(CACHE_NAME)
+                .then((cache) => cache.match(new URL('./mathjax/precache.json', self.registration.scope)))
+                .then((response) => {
+                    if (!response) {
+                        throw new Error('MathJax 離線資源清單不存在');
+                    }
+                    return response.json();
+                })
+                .then((assets) => {
+                    if (!Array.isArray(assets) || assets.some((asset) => typeof asset !== 'string')) {
+                        throw new Error('MathJax 離線資源清單格式無效');
+                    }
+                    let installAssets = Promise.resolve();
+                    for (let index = 0; index < assets.length; index += 50) {
+                        installAssets = installAssets.then(() => cache.addAll(assets.slice(index, index + 50)));
+                    }
+                    return installAssets;
+                }))
             .then(() => self.skipWaiting())
     );
 });
@@ -88,9 +107,11 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    const mathJaxPath = new URL('./mathjax/', self.registration.scope).pathname;
+    const isMathJaxRequest = requestUrl.pathname.startsWith(mathJaxPath);
     event.respondWith(
         caches.open(CACHE_NAME)
-            .then((cache) => cache.match(event.request).then((cachedResponse) => {
+            .then((cache) => cache.match(event.request, { ignoreSearch: isMathJaxRequest }).then((cachedResponse) => {
                 if (cachedResponse) {
                     return cachedResponse;
                 }
