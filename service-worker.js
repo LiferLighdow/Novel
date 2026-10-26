@@ -1,10 +1,11 @@
-const CACHE_NAME = 'novel-reader-v5';
+const CACHE_NAME = 'novel-reader-v6';
 const CACHE_PREFIX = 'novel-reader-';
 const PRECACHE_URLS = [
     './',
     './index.html',
     './styles.css',
     './app.js',
+    './mathjax-loader.js',
     './font.ttf',
     './mathjax/precache.json',
     './pwa.js',

@@ -675,6 +675,14 @@ class NovelReader {
         // 數學公式補丁
         if (window.MathJax && window.MathJax.Hub) {
             window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, contentElement]);
+        } else if (window.mathJaxReady) {
+            window.mathJaxReady
+                .then(() => {
+                    window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, contentElement]);
+                })
+                .catch((error) => {
+                    console.error('無法排版章節中的數學公式：', error);
+                });
         }
     }
 
